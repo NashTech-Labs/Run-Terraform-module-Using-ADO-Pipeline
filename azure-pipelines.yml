@@ -1,0 +1,31 @@
+trigger:
+  -  main 
+
+pool: Default
+
+# variables:
+#   - group: my-variable-group
+  
+steps:
+- script: echo Terraform deployment has been started..
+
+- script: |
+         cd main/
+         terraform init -backend-config="access_key=$(az storage account keys list --resource-group "terraform-rg" --account-name "stgstoragefortfmuz" --query '[0].value' -o tsv)"
+           
+  displayName: 'Terraform init '
+
+- script: |
+         cd main/
+         terraform plan 
+  displayName: 'Terraform plan '
+
+- script: |
+         cd main/
+         terraform apply -auto-approve 
+  displayName: 'Terraform apply '
+
+- script: |
+        cd main/
+        terraform destroy -auto-approve 
+  displayName: 'Terraform Destroy '
